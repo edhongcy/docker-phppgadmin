@@ -1,1 +1,1 @@
-This Project is fix phppgadmin some issue with container
+This Project is phppgadmin on container

@@ -1,16 +1,21 @@
-From dockage/phppgadmin:latest
+FROM ubuntu:20.04
 
-LABEL maintainer="ED Hong <edhong@qnap.com>"
+LABEL maintainer="Ed Hong <edhongcyd@gmail.com>"
 
-# fix postgresql tools is to old
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.9/main" >> /etc/apk/repositories \
-    && echo "http://dl-cdn.alpinelinux.org/alpine/v3.9/community" >> /etc/apk/repositories
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apk --no-cache --update add --upgrade apk-tools postgresql
+RUN apt-get update && \
+    apt-get install -y wget php7.4 php7.4-pgsql php7.4-mbstring && \
+    rm -rf /var/lib/apt/lists/*
 
-# fix error: column p.proisagg does not exist
-RUN sed -i "s/NOT pp.proisagg/pp.prokind='f'/g" /var/www/classes/database/Postgres.php \
-    && sed -i "s/NOT p.proisagg/p.prokind='f'/g" /var/www/classes/database/Postgres.php
+WORKDIR /opt/phppgadmin
 
-# fix Selenium tests page 404 Not Found
-RUN sed -i "/Selenium/d" /var/www/intro.php
+RUN wget --no-check-certificate https://github.com/phppgadmin/phppgadmin/releases/download/REL_7-13-0/phpPgAdmin-7.13.0.tar.gz && \
+    tar xvfz phpPgAdmin-7.13.0.tar.gz --strip=1 && \
+    rm phpPgAdmin-7.13.0.tar.gz
+
+COPY config.inc.php conf/config.inc.php
+
+EXPOSE 80/tcp
+
+CMD ["php", "-S", "0.0.0.0:80"]
