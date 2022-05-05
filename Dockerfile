@@ -2,7 +2,7 @@ FROM ubuntu:20.04
 
 LABEL maintainer="Ed Hong <edhongcyd@gmail.com>"
 
-ENV DEBIAN_FRONTEND=noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get install -y wget php7.4 php7.4-pgsql php7.4-mbstring && \
